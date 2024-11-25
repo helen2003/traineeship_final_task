@@ -1,0 +1,268 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  """Идентификатор пользователя"""
+  id: Int!
+
+  """Почта пользователя"""
+  email: String!
+
+  """Логин пользователя"""
+  login: String!
+
+  """Пароль пользователя"""
+  password: String!
+
+  """Фамилия пользователя"""
+  firstName: String!
+
+  """Имя пользователя"""
+  name: String!
+
+  """Роль пользователя"""
+  role: String!
+}
+
+type Products {
+  """Иденификатор товара"""
+  id: Int!
+
+  """Изображение товара"""
+  image: String!
+
+  """Наименование товара"""
+  name: String!
+
+  """Описание товара"""
+  description: String!
+
+  """Цена товара"""
+  price: Float!
+
+  """Калибр товара"""
+  caliber: String!
+
+  """Длина ствола товара"""
+  length: String!
+
+  """Магазин товара"""
+  shop: String!
+
+  """Категория товара"""
+  categoryId: Int!
+
+  """Продавец товара"""
+  authorId: Int!
+
+  """Дата создания товара"""
+  created_at: DateTime!
+
+  """Дата обновления товара"""
+  update_at: DateTime!
+
+  """Дата удаления товара"""
+  delete_at: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Baskets {
+  """Идентификатор позиции корзины"""
+  id: Int!
+
+  """Идентификатор пользователя"""
+  userId: Int!
+
+  """Идентификатор товара"""
+  productId: Int!
+
+  """Количество товара"""
+  count: Int!
+
+  """Время создания позиции корзины"""
+  created_at: DateTime!
+
+  """Время обновления позиции корзины"""
+  update_at: DateTime!
+
+  """Время удаления позиции корзины"""
+  delete_at: DateTime!
+}
+
+type Categoties {
+  """Идентификатор категории"""
+  id: Int!
+
+  """Наименование категории"""
+  name: String!
+
+  """Дата создания категории"""
+  created_at: DateTime!
+
+  """Дата обновления категории"""
+  update_at: DateTime!
+
+  """Дата удаления категории"""
+  delete_at: DateTime!
+}
+
+type Query {
+  getOneProduct(
+    """Иденификатор товара"""
+    id: Int!
+  ): Products!
+  getProducts(
+    """Пропуск товаров"""
+    skip: Int
+
+    """Взять товаров"""
+    take: Int
+
+    """Фильтр товаров"""
+    categoryId: Int
+
+    """Поиск товаров"""
+    search: String
+  ): [Products!]!
+
+  """Получение корзины пользователя"""
+  getBasket(
+    """Идентификатор пользователя"""
+    userId: Int!
+  ): [Baskets!]!
+  getCategories: [Categoties!]!
+}
+
+type Mutation {
+  updateUser(updateUserData: UpdateUserInput!): User!
+  createProduct(createProductData: CreateProductInput!): Products!
+  updateProduct(updateProductData: UpdateProductInput!): Products!
+  deleteProduct(
+    """Иденификатор товара"""
+    id: Int!
+  ): Products!
+
+  """Создание позиции корзины"""
+  createBasket(createBasket: CreateBasketInput!): Baskets!
+
+  """Обнровление позиции корзины"""
+  updateBasket(updateBasket: UpdateBasketInput!): Baskets!
+
+  """Удаление позиции корзины"""
+  deleteBasket(
+    """Идентификатор позиции корзины"""
+    id: Int!
+  ): Baskets!
+  createCategory(createCategory: CreateCategoryInput!): Categoties!
+  updateCategory(updateCategory: UpdateCategoryInput!): Categoties!
+  deleteCategory(
+    """Иденификатор категории"""
+    id: Int!
+  ): Categoties!
+}
+
+input UpdateUserInput {
+  """Идентификатор пользователя"""
+  id: Int!
+
+  """Почта пользователя"""
+  email: String
+
+  """Логин пользователя"""
+  login: String
+
+  """Фамилия пользователя"""
+  firstName: String
+
+  """Имя пользователя"""
+  name: String
+
+  """Роль пользователя"""
+  role: String
+}
+
+input CreateProductInput {
+  """Наименование товара"""
+  name: String!
+
+  """Описание товара"""
+  description: String!
+
+  """Цена товара"""
+  price: Float!
+
+  """Категория товара"""
+  categoryId: Int!
+
+  """Продавец товара"""
+  authorId: Int!
+
+  """Калибр товара"""
+  caliber: String!
+
+  """Длина ствола товара"""
+  length: String!
+
+  """Магазин товара"""
+  shop: String!
+}
+
+input UpdateProductInput {
+  """Наименование товара"""
+  name: String!
+
+  """Описание товара"""
+  description: String!
+
+  """Цена товара"""
+  price: Float!
+
+  """Категория товара"""
+  categoryId: Int!
+
+  """Калибр товара"""
+  caliber: String!
+
+  """Длина ствола товара"""
+  length: String!
+
+  """Магазин товара"""
+  shop: String!
+}
+
+input CreateBasketInput {
+  """Идентифкатор пользователя"""
+  userId: Int!
+
+  """Идентифкатор товара"""
+  productId: Int!
+
+  """Количесвто товара"""
+  count: Int!
+}
+
+input UpdateBasketInput {
+  """Идентифкатор позиции корзины"""
+  id: Int!
+
+  """Количесвто товара"""
+  count: Int!
+}
+
+input CreateCategoryInput {
+  """Наименование категории"""
+  name: String!
+}
+
+input UpdateCategoryInput {
+  """Идентификатор категории"""
+  id: Int!
+
+  """Наименование категории"""
+  name: String!
+}
