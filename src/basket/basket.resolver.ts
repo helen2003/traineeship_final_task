@@ -11,7 +11,24 @@ import { DeleteBasketArgs } from './dto/args/delete-basket.args';
 export class BasketResolver {
   constructor(private readonly basketService: BasketService) {}
 
+  //Чтобы получить basket пользователя, тебе не нужно чтобы фронты отправляли тебе его Id. Ты сама его определять декодировав токен
+  //Для его нужно добавить гвард авторизации, @CurrentUser
+  /*
+  export const CurrentUser = createParamDecorator(
+  (data: unknown, context: ExecutionContext): ValidatedUser => {
+    const ctx = GqlExecutionContext.create(context);
+    const body = ctx.getContext() as { req: Request (биба express) };
+    const request = body.req;
+    return request.user as ValidatedUser;
+  },
+);
+  */
   @Query(() => [Baskets], { description: 'Получение корзины пользователя' })
+  /*
+  getBasket(@Args('userId', { type: () => Int }) ): Promise<Basket[]> {
+    return this.basketService.findBasket(getBasketArgs);
+  }
+  */
   getBasket(@Args() getBasketArgs: GetBasketArgs): Promise<Basket[]> {
     return this.basketService.findBasket(getBasketArgs);
   }

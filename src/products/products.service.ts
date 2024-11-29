@@ -24,22 +24,27 @@ export class ProductsService {
     });
   }
 
-  async paginationProducts(
+  async paginationProducts( // наименование не подходи, ты можешь просто указать findAll()
     pagination: PaginationProductArgs,
-  ): Promise<Product[] | null> {
+  ): Promise<Product[] | null> { // он у тебя не вернет Null, если товаров нет, он вернет пустой []
     return this.prisma.product.findMany({
       skip: pagination.skip,
       take: pagination.take,
       where: {
         AND: [
           {
-            name: { contains: pagination.search },
+            name: { contains: pagination.search, mode: 'insensitive' },
           },
           {
             categoryId: pagination.categoryId,
           },
         ],
       },
+      include: {
+        Category: {
+          where: { delete_at: null }
+        },
+      }
     });
   }
 
@@ -49,6 +54,7 @@ export class ProductsService {
     return await this.prisma.product.update({
       where: { id: updateProductInput.id },
       data: {
+        //Громосткая запись, можешь воспользоваться оператором '...' - ...updateProductInput. Почитай про него, ну и также можешь почитать про тернарных операторов
         name: updateProductInput.name,
         description: updateProductInput.description,
         price: updateProductInput.price,

@@ -1,3 +1,4 @@
+//Лучше назвать JwtPayload
 export class TokenInfoInterface {
   sub: number;
   login: string;

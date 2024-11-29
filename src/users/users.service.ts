@@ -10,11 +10,28 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async createUser(userDto: CreateUserDto): Promise<User> {
+
     const hashPassword = await bcrypt.hash(userDto.password, 5);
+    /*
+    Мы рассматриваем кейс что корзина сущность Basket у пользователя одна, тогда мы можем при создании пользователя сразу создавать basket
+      await this.prisma.user.create({
+      data: { ...userDto, password: hashPassword, 
+        Basket { 
+          create {
+            ...
+          }
+        } 
+      },
+    });
+    */
+    
+
     const user = await this.prisma.user.create({
-      data: { ...userDto, password: hashPassword },
+      data: { ...userDto, password: hashPassword},
       //omit: {}
     });
+
+    //Лишняя нагроможденноть можешь сразу в return это делать return this.prisma.user.create({...})
     return user;
   }
 

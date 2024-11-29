@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -17,13 +18,15 @@ model User {
   role      RoleEnum  @default(USER)
   Basket    Basket?
   product   Product[]
+
+  //Где soft-delete ?
 }
 
 model Category {
   id         Int       @id @default(autoincrement())
   name       String
   created_at DateTime  @default(now())
-  update_at  DateTime?
+  update_at  DateTime? //@updatedAt
   delete_at  DateTime?
   products   Product[]
 }
@@ -47,6 +50,33 @@ model Product {
   authorId    Int?
 }
 
+//У тебя в корзине будет только один товар Или у тебя будет несколько корзин??? Снизу более правильная реализация под данный кейс
+
+// model Basket {
+//   id         Int       @id @default(autoincrement())
+//   userId     Int?      @unique
+
+//   created_at DateTime  @default(now())
+//   update_at  DateTime?
+//   delete_at  DateTime?
+  
+//   User       User?     @relation(fields: [userId], references: [id])
+// }
+
+// model BasketProduct {
+//   id         Int       @id @default(autoincrement())
+//   basket_id   Int
+//   product_id Int
+//   count      Int
+
+//   created_at DateTime  @default(now())
+//   update_at  DateTime?
+//   delete_at  DateTime?
+  
+//   Basket     Basket      @relation(fields: [basket_id], references: [id])
+//   Product    Product     @relation(fields: [product_id], references: [id])
+// }
+
 model Basket {
   id         Int       @id @default(autoincrement())
   user       User?     @relation(fields: [userId], references: [id])
@@ -58,6 +88,8 @@ model Basket {
   update_at  DateTime?
   delete_at  DateTime?
 }
+
+
 
 enum RoleEnum {
   USER

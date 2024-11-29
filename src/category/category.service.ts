@@ -16,7 +16,7 @@ export class CategoryService {
   }
 
   async getAllCategory(): Promise<Category[]> {
-    return await this.prisma.category.findMany({});
+    return await this.prisma.category.findMany({}); //this.prisma.category.findMany() можно просто вот так указать
   }
 
   async updateCategory(

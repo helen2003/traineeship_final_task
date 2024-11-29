@@ -1,6 +1,9 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-
+//import { Basket } from '@prisma/client'
 @ObjectType()
+//Зедсь ты описываешь graphql моделей сущности из prisma, тут стоит имплементировать из prisma Тип
+//export class BasketsModel implements Basket {
+//И когда описываешь модель, не стоит расписывать описание
 export class Baskets {
   @Field((type) => Int, { description: 'Идентификатор позиции корзины' })
   id: number;

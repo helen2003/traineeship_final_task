@@ -18,14 +18,14 @@ import { TokenInfoInterface } from './interface/tokenInfo.interface';
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
+    private prisma: PrismaService,   //вызываешь призму но нигде не используешь
     private userService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
 
   async login(authDto: AuthUserDto): Promise<TokenInterface> {
-    const user = await this.validateUser(authDto);
+    const user = await this.validateUser(authDto); //вызов валидации лучше засунуть в гварду
     return this.getTokens({
       sub: user.id,
       login: user.login,
@@ -35,7 +35,11 @@ export class AuthService {
   }
 
   async registration(userDto: CreateUserDto): Promise<TokenInterface> {
-    const candidate = await this.userService.getUserByEmail(userDto.login);
+    /*
+    Во-первых, почему ты делаешь поиск по login, но вызываешь методов по поиску email
+    Во-вторых, блок с candidate лучше вынести в createUser, здесь в регистраци она смотрится не совсем корректно
+    */
+    const candidate = await this.userService.getUserByEmail(userDto.login); 
     if (candidate) {
       throw new HttpException(
         'Пользователь с таким логином существует',
@@ -54,25 +58,14 @@ export class AuthService {
 
   async getTokens(user: TokenInfoInterface): Promise<TokenInterface> {
     const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync(
-        {
-          sub: user.sub,
-          email: user.email,
-          login: user.login,
-          role: user.role,
-        },
+      //Можешь делать вызов просто this.jwtService.signAsync(user (лучше назвать payload), {...options})
+      this.jwtService.signAsync(user,
         {
           secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
           expiresIn: '15m',
         },
       ),
-      this.jwtService.signAsync(
-        {
-          sub: user.sub,
-          email: user.email,
-          login: user.login,
-          role: user.role,
-        },
+      this.jwtService.signAsync(user,
         {
           secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
           expiresIn: '7d',
@@ -86,6 +79,7 @@ export class AuthService {
     };
   }
 
+  //если будет вызывать его в гварде, то стоит убрать private
   private async validateUser(userDto: AuthUserDto): Promise<User> {
     const user = await this.userService.getUserByEmail(userDto.login);
     const passwordEquals = await bcrypt.compare(
