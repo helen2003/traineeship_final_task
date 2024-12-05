@@ -21,7 +21,7 @@ export class ProductsService {
     const product = await this.prisma.product.create({
       data: createProductData,
     });
-    this.fileService.updateIdProductFile(addFilesData.image, product.id);
+    this.fileService.updateIdProductFile(addFilesData.image, product.id); // впринцепи все ок, только лучше не image, а file_id указать. Фронтам так понятнее
     return product;
   }
 
@@ -48,10 +48,13 @@ export class ProductsService {
         ],
       },
     });
-    const totalCount = products.length
+    // Не правильно, нужено делать запрос на количество
+    // У нас же стоит take, соответсвенно сколько take, столько и длина массива. А нам нужна общая длина без take
+    const totalCount = products.length 
     return {totalCount: totalCount, Products: products}
   }
 
+  //Зачем поиск категории находится в product.service
   async findCategory(categoryId: number): Promise<Category[]> {
     return this.prisma.category.findMany({
       where: {
@@ -60,6 +63,7 @@ export class ProductsService {
     });
   }
 
+  //Зачем поиск файла находится в product.service
   async findFiles(id: number): Promise<File[]> {
     return this.prisma.file.findMany({
       where: {

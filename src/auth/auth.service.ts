@@ -25,9 +25,9 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  async login(user: UserModel): Promise<TokenInterface> {
+  async login(user: JwtPayloadInterface): Promise<TokenInterface> {
     return this.getTokens({
-      sub: user.id,
+      sub: user.sub,
       login: user.login,
       email: user.email,
       role: user.role,

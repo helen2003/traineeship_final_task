@@ -11,7 +11,6 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async createUser(userDto: CreateUserDto): Promise<User> {
-    const hashPassword = await bcrypt.hash(userDto.password, 5);
     const candidate = await this.getUserByLogin(userDto.login);
     if (candidate) {
       throw new HttpException(
@@ -19,6 +18,9 @@ export class UsersService {
         HttpStatus.BAD_REQUEST,
       );
     }
+    //Лучше сначала проверить есть ли такой пользователь, а потом уже хешировать пароль.
+    //А то если пользователя нету, ты просто так обрабатываешь это действие
+    const hashPassword = await bcrypt.hash(userDto.password, 5);
 
     return this.prisma.user.create({
       data: {

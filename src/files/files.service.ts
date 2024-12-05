@@ -9,7 +9,8 @@ import { PrismaService } from 'src/common/prisma/prisma.service';
 export class FilesService {
   constructor(private prisma: PrismaService) {}
 
-  private writeFile(buffer): string {
+  //Тип всегда должен быть указан
+  private writeFile(buffer: Buffer): string {
     try {
       const fileName = uuid.v4() + '.jpg';
       const filePath = path.resolve(__dirname, '..', 'static');
