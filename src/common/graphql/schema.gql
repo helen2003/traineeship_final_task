@@ -54,6 +54,11 @@ type ProductModel {
   deleted_at: DateTime!
 }
 
+type ProductAllOutput {
+  totalCount: Int!
+  Products: [ProductModel!]!
+}
+
 type BasketProductModel {
   id: Int!
   basket_id: Int!
@@ -72,12 +77,17 @@ type BasketModel {
   deleted_at: DateTime!
 }
 
+type CategoryAllOutput {
+  totalCount: Int!
+  Categories: [CategoryModel!]!
+}
+
 type Query {
   getOneProduct(id: Int!): ProductModel!
-  getProducts(skip: Int, take: Int, categoryId: Int, search: String): [ProductModel!]!
+  getProducts(skip: Int, take: Int, categoryId: Int, search: String): ProductAllOutput!
   getBasket: [BasketModel!]!
   buyProduct: [BasketProductModel!]!
-  getCategories: [CategoryModel!]!
+  getCategoryAll: CategoryAllOutput!
 }
 
 type Mutation {

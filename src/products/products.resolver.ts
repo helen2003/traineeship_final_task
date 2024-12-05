@@ -17,6 +17,7 @@ import { ProductModel } from './model/product.model';
 import { CategoryModel } from 'src/category/model/category.model';
 import { FileModel } from 'src/files/model/files.model';
 import { Roles } from 'src/common/decorators/roles.decorator';
+import { ProductAllOutput } from './dto/output/findAll-products.output';
 
 @Resolver(() => ProductModel)
 export class ProductsResolver {
@@ -27,8 +28,13 @@ export class ProductsResolver {
     return this.productsService.findOne(id);
   }
 
-  @Query(() => [ProductModel])
-  getProducts(@Args() getProducts: GetProductArgs): Promise<Product[]> {
+  // @Query(() => [ProductModel])
+  // getProducts(@Args() getProducts: GetProductArgs): Promise<Product[]> {
+  //   return this.productsService.findAll(getProducts);
+  // }
+
+  @Query(() => ProductAllOutput)
+  getProducts(@Args() getProducts: GetProductArgs) {
     return this.productsService.findAll(getProducts);
   }
 

@@ -1,17 +1,19 @@
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { CategoryService } from './category.service';
 import { CategoryModel } from './model/category.model';
 import { Category } from '@prisma/client';
 import { Roles } from 'src/common/decorators/roles.decorator';
-import { CategorytInput } from './input/category.input';
+import { CategorytInput } from './dto/category.input';
+import { CategoryAllOutput } from './dto/findAll-categories.output';
 
+// @Resolver(() => CategoryAllModel)
 @Resolver(() => CategoryModel)
 export class CategoryResolver {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Query(() => [CategoryModel])
-  getCategories(): Promise<Category[]> {
-    return this.categoryService.getAll();
+  @Query(() => CategoryAllOutput)
+  getCategoryAll() {
+    return this.categoryService.getAll()
   }
 
   // @Roles('ADMIN')
