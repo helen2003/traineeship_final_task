@@ -1,36 +1,41 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CategoryService } from './category.service';
-import { Categoties } from './model/category.model';
+import { CategoryModel } from './model/category.model';
 import { Category } from '@prisma/client';
-import { CreateCategoryInput } from './dto/input/create-category.input';
-import { UpdateCategoryInput } from './dto/input/update-category.input';
-import { DeleteСategoryArgs } from './dto/args/delete-category.args';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { CategorytInput } from './input/category.input';
 
-@Resolver(() => Categoties)
+@Resolver(() => CategoryModel)
 export class CategoryResolver {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Query(() => [Categoties])
+  @Query(() => [CategoryModel])
   getCategories(): Promise<Category[]> {
-    return this.categoryService.getAllCategory();
+    return this.categoryService.getAll();
   }
 
-  @Mutation(() => Categoties)
+  // @Roles('ADMIN')
+  @Mutation(() => CategoryModel)
   createCategory(
-    @Args('createCategory') createCategoryImput: CreateCategoryInput,
+    // @Args({ name: 'name', type: () => String }) name: string,
+    // @Args('name') name: string,
+    @Args('createCategoryData') createCategoryInput: CategorytInput,
   ): Promise<Category> {
-    return this.categoryService.createCategory(createCategoryImput);
+    return this.categoryService.create(createCategoryInput.name);
   }
 
-  @Mutation(() => Categoties)
+  @Roles('ADMIN')
+  @Mutation(() => CategoryModel)
   updateCategory(
-    @Args('updateCategory') updateCategoryInput: UpdateCategoryInput,
+    @Args('id', { type: () => Int }) id: number,
+    @Args('updateCategoryData') updateCategoryInput: CategorytInput,
   ): Promise<Category> {
-    return this.categoryService.updateCategory(updateCategoryInput);
+    return this.categoryService.update(id, updateCategoryInput.name);
   }
 
-  @Mutation(() => Categoties)
-  deleteCategory(@Args() deleteCategoryArgs: DeleteСategoryArgs) {
-    return this.categoryService.deleteCategory(deleteCategoryArgs);
+  @Roles('ADMIN')
+  @Mutation(() => CategoryModel)
+  deleteCategory(@Args('id', { type: () => Int }) id: number) {
+    return this.categoryService.delete(id);
   }
 }

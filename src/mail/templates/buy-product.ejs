@@ -1,0 +1,39 @@
+<h2>Покупка товаров</h2>
+
+<table>
+  <caption>
+    Информация о покупке
+  </caption>
+  <thead>
+    <tr>
+      <th scope="col">Номер</th>
+      <th scope="col">Наименование товара</th>
+      <th scope="col">Количество</th>
+      <th scope="col">Цена</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+          <% products.map((product, index)=>{ %>
+      <th>
+          <%= index+1 %>
+      </th>
+      <th>
+        <%= product.Product.name %>
+    </th>
+    <th>
+      <%= product.count %>
+  </th>
+  <th>
+    <%= (product.Product.price*product.count) %>
+</th>
+    <% }) %>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <th scope="row" colspan="3">Сумма покупки</th>
+      <td><%= sum %></td>
+    </tr>
+  </tfoot>
+</table>

@@ -2,68 +2,17 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type User {
-  """Идентификатор пользователя"""
+type UserModel {
   id: Int!
-
-  """Почта пользователя"""
   email: String!
-
-  """Логин пользователя"""
   login: String!
-
-  """Пароль пользователя"""
   password: String!
-
-  """Фамилия пользователя"""
   firstName: String!
-
-  """Имя пользователя"""
   name: String!
-
-  """Роль пользователя"""
   role: String!
-}
-
-type Products {
-  """Иденификатор товара"""
-  id: Int!
-
-  """Изображение товара"""
-  image: String!
-
-  """Наименование товара"""
-  name: String!
-
-  """Описание товара"""
-  description: String!
-
-  """Цена товара"""
-  price: Float!
-
-  """Калибр товара"""
-  caliber: String!
-
-  """Длина ствола товара"""
-  length: String!
-
-  """Магазин товара"""
-  shop: String!
-
-  """Категория товара"""
-  categoryId: Int!
-
-  """Продавец товара"""
-  authorId: Int!
-
-  """Дата создания товара"""
   created_at: DateTime!
-
-  """Дата обновления товара"""
-  update_at: DateTime!
-
-  """Дата удаления товара"""
-  delete_at: DateTime!
+  deleted_at: DateTime!
+  updated_at: DateTime!
 }
 
 """
@@ -71,198 +20,121 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type Baskets {
-  """Идентификатор позиции корзины"""
+type CategoryModel {
   id: Int!
-
-  """Идентификатор пользователя"""
-  userId: Int!
-
-  """Идентификатор товара"""
-  productId: Int!
-
-  """Количество товара"""
-  count: Int!
-
-  """Время создания позиции корзины"""
+  name: String!
   created_at: DateTime!
-
-  """Время обновления позиции корзины"""
-  update_at: DateTime!
-
-  """Время удаления позиции корзины"""
-  delete_at: DateTime!
+  updated_at: DateTime!
+  deleted_at: DateTime!
 }
 
-type Categoties {
-  """Идентификатор категории"""
+type FileModel {
   id: Int!
-
-  """Наименование категории"""
-  name: String!
-
-  """Дата создания категории"""
+  url: String!
+  productId: Int!
   created_at: DateTime!
+  updated_at: DateTime!
+  deleted_at: DateTime!
+}
 
-  """Дата обновления категории"""
-  update_at: DateTime!
+type ProductModel {
+  id: Int!
+  name: String!
+  description: String!
+  File: [FileModel!]!
+  Category: [CategoryModel!]!
+  price: Float!
+  caliber: String!
+  length: String!
+  shop: String!
+  categoryId: Int!
+  authorId: Int!
+  created_at: DateTime!
+  updated_at: DateTime!
+  deleted_at: DateTime!
+}
 
-  """Дата удаления категории"""
-  delete_at: DateTime!
+type BasketProductModel {
+  id: Int!
+  basket_id: Int!
+  count: Int!
+  product_id: Int!
+  created_at: DateTime!
+  updated_at: DateTime!
+  deleted_at: DateTime!
+}
+
+type BasketModel {
+  id: Int!
+  userId: Int!
+  created_at: DateTime!
+  updated_at: DateTime!
+  deleted_at: DateTime!
 }
 
 type Query {
-  getOneProduct(
-    """Иденификатор товара"""
-    id: Int!
-  ): Products!
-  getProducts(
-    """Пропуск товаров"""
-    skip: Int
-
-    """Взять товаров"""
-    take: Int
-
-    """Фильтр товаров"""
-    categoryId: Int
-
-    """Поиск товаров"""
-    search: String
-  ): [Products!]!
-
-  """Получение корзины пользователя"""
-  getBasket(
-    """Идентификатор пользователя"""
-    userId: Int!
-  ): [Baskets!]!
-  getCategories: [Categoties!]!
+  getOneProduct(id: Int!): ProductModel!
+  getProducts(skip: Int, take: Int, categoryId: Int, search: String): [ProductModel!]!
+  getBasket: [BasketModel!]!
+  buyProduct: [BasketProductModel!]!
+  getCategories: [CategoryModel!]!
 }
 
 type Mutation {
-  updateUser(updateUserData: UpdateUserInput!): User!
-  createProduct(createProductData: CreateProductInput!): Products!
-  updateProduct(updateProductData: UpdateProductInput!): Products!
-  deleteProduct(
-    """Иденификатор товара"""
-    id: Int!
-  ): Products!
-
-  """Создание позиции корзины"""
-  createBasket(createBasket: CreateBasketInput!): Baskets!
-
-  """Обнровление позиции корзины"""
-  updateBasket(updateBasket: UpdateBasketInput!): Baskets!
-
-  """Удаление позиции корзины"""
-  deleteBasket(
-    """Идентификатор позиции корзины"""
-    id: Int!
-  ): Baskets!
-  createCategory(createCategory: CreateCategoryInput!): Categoties!
-  updateCategory(updateCategory: UpdateCategoryInput!): Categoties!
-  deleteCategory(
-    """Иденификатор категории"""
-    id: Int!
-  ): Categoties!
+  updateUser(updateUserData: UpdateUserInput!): UserModel!
+  updatePassword(password: String!): UserModel!
+  updateRole(userId: Int!, role: String!): UserModel!
+  deleteAccount: UserModel!
+  createProduct(createProductData: CreateProductInput!, addFilesData: AddFilesInput!): ProductModel!
+  updateProduct(updateProductData: UpdateProductInput!): ProductModel!
+  deleteProduct(id: Int!): ProductModel!
+  updateFileId(idFiles: [Int!]!, idProduct: Int!): Int!
+  deleteFile(id: Int!): FileModel!
+  createBasketProduct(createBasket: CreateBasketInput!): BasketProductModel!
+  updateBasket(idBasketProduct: Int!, count: Int!): BasketProductModel!
+  deleteBasket(idBasketProduct: Int!): BasketProductModel!
+  createCategory(createCategoryData: CategorytInput!): CategoryModel!
+  updateCategory(id: Int!, updateCategoryData: CategorytInput!): CategoryModel!
+  deleteCategory(id: Int!): CategoryModel!
 }
 
 input UpdateUserInput {
-  """Идентификатор пользователя"""
-  id: Int!
-
-  """Почта пользователя"""
   email: String
-
-  """Логин пользователя"""
   login: String
-
-  """Фамилия пользователя"""
   firstName: String
-
-  """Имя пользователя"""
   name: String
-
-  """Роль пользователя"""
-  role: String
 }
 
 input CreateProductInput {
-  """Наименование товара"""
   name: String!
-
-  """Описание товара"""
   description: String!
-
-  """Цена товара"""
   price: Float!
-
-  """Категория товара"""
-  categoryId: Int!
-
-  """Продавец товара"""
-  authorId: Int!
-
-  """Калибр товара"""
   caliber: String!
-
-  """Длина ствола товара"""
   length: String!
-
-  """Магазин товара"""
   shop: String!
+  categoryId: Int!
+  authorId: Int!
+}
+
+input AddFilesInput {
+  image: [Int!]
 }
 
 input UpdateProductInput {
-  """Наименование товара"""
   name: String!
-
-  """Описание товара"""
   description: String!
-
-  """Цена товара"""
   price: Float!
-
-  """Категория товара"""
-  categoryId: Int!
-
-  """Калибр товара"""
   caliber: String!
-
-  """Длина ствола товара"""
   length: String!
-
-  """Магазин товара"""
   shop: String!
+  categoryId: Int!
 }
 
 input CreateBasketInput {
-  """Идентифкатор пользователя"""
-  userId: Int!
-
-  """Идентифкатор товара"""
-  productId: Int!
-
-  """Количесвто товара"""
+  product_id: Int!
   count: Int!
 }
 
-input UpdateBasketInput {
-  """Идентифкатор позиции корзины"""
-  id: Int!
-
-  """Количесвто товара"""
-  count: Int!
-}
-
-input CreateCategoryInput {
-  """Наименование категории"""
-  name: String!
-}
-
-input UpdateCategoryInput {
-  """Идентификатор категории"""
-  id: Int!
-
-  """Наименование категории"""
+input CategorytInput {
   name: String!
 }

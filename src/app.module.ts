@@ -10,13 +10,13 @@ import { ProductsModule } from './products/products.module';
 import { BasketModule } from './basket/basket.module';
 import { CategoryModule } from './category/category.module';
 import { FilesModule } from './files/files.module';
-import { ServeStaticModule } from '@nestjs/serve-static';
-// import * as path from 'path';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: `.env`,
+      isGlobal: true,
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -24,15 +24,13 @@ import { ServeStaticModule } from '@nestjs/serve-static';
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
-    // ServeStaticModule.forRoot({
-    //   rootPath: path.resolve(__dirname, 'static'),
-    // }),
     AuthModule,
     UsersModule,
     ProductsModule,
     BasketModule,
     CategoryModule,
     FilesModule,
+    MailModule,
   ],
   controllers: [],
   providers: [],

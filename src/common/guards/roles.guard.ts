@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
 import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorators/roles.decorator';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -29,7 +30,9 @@ export class RolesGuard implements CanActivate {
       if (!requiredRoles) {
         return true;
       }
-      const req = context.switchToHttp().getRequest();
+      // const req = context.switchToHttp().getRequest();
+      const ctx = GqlExecutionContext.create(context);
+      const req = ctx.getContext().req;
       const authHeader = req.headers.authorization;
       const bearer = authHeader.split(' ')[0];
       const token = authHeader.split(' ')[1];
@@ -40,15 +43,13 @@ export class RolesGuard implements CanActivate {
         });
       }
 
-      const user = this.jwtService.verify(token);
+      const user = this.jwtService.verify(token, {secret: process.env.JWT_ACCESS_SECRET});
       req.user = user;
       requiredRoles.indexOf(user.role);
       if (requiredRoles.indexOf(user.role) > -1) {
         return true;
       }
-      // else return false
       throw new HttpException('Нет доступа', HttpStatus.FORBIDDEN);
-      //return user.roles.some(role => requiredRoles.includes(role.value));
     } catch (e) {
       console.log(e);
       throw new HttpException('Нет доступа', HttpStatus.FORBIDDEN);

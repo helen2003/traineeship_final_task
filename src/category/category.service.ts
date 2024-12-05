@@ -1,42 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Category } from '@prisma/client';
 import { PrismaService } from 'src/common/prisma/prisma.service';
-import { CreateCategoryInput } from './dto/input/create-category.input';
-import { UpdateCategoryInput } from './dto/input/update-category.input';
-import { DeleteСategoryArgs } from './dto/args/delete-category.args';
 
 @Injectable()
 export class CategoryService {
   constructor(private prisma: PrismaService) {}
 
-  async createCategory(
-    createCategoryData: CreateCategoryInput,
-  ): Promise<Category> {
-    return await this.prisma.category.create({ data: createCategoryData });
-  }
-
-  async getAllCategory(): Promise<Category[]> {
-    return await this.prisma.category.findMany({}); //this.prisma.category.findMany() можно просто вот так указать
-  }
-
-  async updateCategory(
-    updateCategoryData: UpdateCategoryInput,
-  ): Promise<Category> {
-    return await this.prisma.category.update({
+  async create(name: string): Promise<Category> {
+    const category = await this.prisma.category.findFirst({
       where: {
-        id: updateCategoryData.id,
+        name: {
+          equals: name,
+          mode: 'insensitive'
+        }
+      }
+    })
+    if (category){
+      throw new HttpException('Категория уже записана', HttpStatus.BAD_REQUEST);
+    }
+    return this.prisma.category.create({ data: { name: name } });
+  }
+
+  async getAll(): Promise<Category[]> {
+    return this.prisma.category.findMany({});
+  }
+
+  async update(id: number, name: string): Promise<Category> {
+    return this.prisma.category.update({
+      where: {
+        id: id,
       },
       data: {
-        name: updateCategoryData.name,
-        update_at: new Date(),
+        name: name,
       },
     });
   }
 
-  async deleteCategory(deleteCategoryArgs: DeleteСategoryArgs) {
-    return await this.prisma.category.delete({
+  async delete(id: number) {
+    return this.prisma.category.delete({
       where: {
-        id: deleteCategoryArgs.id,
+        id: id,
       },
     });
   }

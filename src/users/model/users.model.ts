@@ -1,26 +1,35 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { RoleEnum } from '@prisma/client';
+import { RoleEnum, User } from '@prisma/client';
 
 @ObjectType()
-export class User {
-  @Field((type) => Int, { description: 'Идентификатор пользователя' })
+export class UserModel implements User{
+  @Field(() => Int)
   id: number;
 
-  @Field({ description: 'Почта пользователя' })
+  @Field(() => String)
   email: string;
 
-  @Field({ description: 'Логин пользователя' })
+  @Field(() => String)
   login: string;
 
-  @Field({ description: 'Пароль пользователя' })
+  @Field(() => String)
   password: string;
 
-  @Field({ description: 'Фамилия пользователя' })
+  @Field(() => String)
   firstName: string;
 
-  @Field({ description: 'Имя пользователя' })
+  @Field(() => String)
   name: string;
 
-  @Field({ description: 'Роль пользователя' })
+  @Field()
   role: RoleEnum;
+
+  @Field()
+  created_at: Date;
+
+  @Field()
+  deleted_at: Date;
+
+  @Field()
+  updated_at: Date;
 }

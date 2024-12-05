@@ -1,29 +1,40 @@
 import { Field, Float, InputType, Int } from '@nestjs/graphql';
-import { Products } from 'src/products/model/product.model';
+import { PickType } from '@nestjs/swagger';
+import { ProductModel } from 'src/products/model/product.model';
 
 @InputType()
-export class CreateProductInput extends Products {
-  @Field({ description: 'Наименование товара' })
+export class CreateProductInput extends PickType(ProductModel, [
+  'name',
+  'description',
+  'price',
+  'categoryId',
+  'authorId',
+  'caliber',
+  'length',
+  'shop',
+]) {
+
+  @Field(() => String)
   name: string;
 
-  @Field({ description: 'Описание товара' })
+  @Field(() => String)
   description: string;
 
-  @Field((type) => Float, { description: 'Цена товара' })
+  @Field(() => Float)
   price: number;
 
-  @Field((type) => Int, { description: 'Категория товара' })
-  categoryId: number;
-
-  @Field((type) => Int, { description: 'Продавец товара' })
-  authorId: number;
-
-  @Field({ description: 'Калибр товара' })
+  @Field(() => String)
   caliber: string;
 
-  @Field({ description: 'Длина ствола товара' })
+  @Field(() => String)
   length: string;
 
-  @Field({ description: 'Магазин товара' })
+  @Field(() => String)
   shop: string;
+
+  @Field(() => Int)
+  categoryId: number;
+
+  @Field(() => Int)
+  authorId: number;
 }

@@ -1,50 +1,55 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { BasketService } from './basket.service';
-import { GetBasketArgs } from './dto/args/get-basket.args';
-import { Basket } from '@prisma/client';
-import { Baskets } from './model/basket.model';
+import { Basket, BasketProduct } from '@prisma/client';
 import { CreateBasketInput } from './dto/input/create-basket.input';
 import { UpdateBasketInput } from './dto/input/update-basket.input';
-import { DeleteBasketArgs } from './dto/args/delete-basket.args';
+import { BasketProductModel } from './model/basketProduct.model';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { ValidateUser } from 'src/common/decorators/dto/validate-user.dto';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { count } from 'console';
+import { BasketModel } from './model/basket.model';
 
-@Resolver(() => Baskets)
+@Resolver(() => BasketProductModel)
 export class BasketResolver {
   constructor(private readonly basketService: BasketService) {}
 
-  //Чтобы получить basket пользователя, тебе не нужно чтобы фронты отправляли тебе его Id. Ты сама его определять декодировав токен
-  //Для его нужно добавить гвард авторизации, @CurrentUser
-  /*
-  export const CurrentUser = createParamDecorator(
-  (data: unknown, context: ExecutionContext): ValidatedUser => {
-    const ctx = GqlExecutionContext.create(context);
-    const body = ctx.getContext() as { req: Request (биба express) };
-    const request = body.req;
-    return request.user as ValidatedUser;
-  },
-);
-  */
-  @Query(() => [Baskets], { description: 'Получение корзины пользователя' })
-  /*
-  getBasket(@Args('userId', { type: () => Int }) ): Promise<Basket[]> {
-    return this.basketService.findBasket(getBasketArgs);
-  }
-  */
-  getBasket(@Args() getBasketArgs: GetBasketArgs): Promise<Basket[]> {
-    return this.basketService.findBasket(getBasketArgs);
+  @Query(() => [BasketModel])
+  @UseGuards(JwtAuthGuard)
+  getBasket(@CurrentUser() user: ValidateUser): Promise<BasketProductModel[]> {
+    return this.basketService.findBasket(user);
   }
 
-  @Mutation(() => Baskets, { description: 'Создание позиции корзины' })
-  createBasket(@Args('createBasket') createBasketData: CreateBasketInput): Promise<Basket> {
-    return this.basketService.createBasket(createBasketData);
+  @Query(() => [BasketProductModel])
+  @UseGuards(JwtAuthGuard)
+  buyProduct(@CurrentUser() user: ValidateUser) {
+    return this.basketService.buyProduct(user);
   }
 
-  @Mutation(() => Baskets, { description: 'Обнровление позиции корзины' })
-  updateBasket(@Args('updateBasket') updateBasketData: UpdateBasketInput): Promise<Basket> {
-    return this.basketService.updateBasket(updateBasketData);
+  @Mutation(() => BasketProductModel)
+  @UseGuards(JwtAuthGuard)
+  createBasketProduct(
+    @CurrentUser() user: ValidateUser,
+    @Args('createBasket') createBasketData: CreateBasketInput,
+  ): Promise<BasketProduct> {
+    return this.basketService.create(user, createBasketData);
   }
 
-  @Mutation(() => Baskets, { description: 'Удаление позиции корзины' })
-  deleteBasket(@Args() deleteBasketArgs: DeleteBasketArgs): Promise<Basket> {
-    return this.basketService.updateBasket(deleteBasketArgs);
+  @Mutation(() => BasketProductModel)
+  @UseGuards(JwtAuthGuard)
+  updateBasket(
+    @Args('idBasketProduct', { type: () => Int }) id: number,
+    @Args('count', { type: () => Int }) count: number,
+  ): Promise<BasketProduct> {
+    return this.basketService.update(id, count);
+  }
+
+  @Mutation(() => BasketProductModel)
+  @UseGuards(JwtAuthGuard)
+  deleteBasket(
+    @Args('idBasketProduct', { type: () => Int }) id: number,
+  ): Promise<BasketProductModel> {
+    return this.basketService.delete(id);
   }
 }

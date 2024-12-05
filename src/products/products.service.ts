@@ -1,76 +1,84 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { CreateProductInput } from './dto/input/create-product.input';
-import { Product } from '@prisma/client';
+import { Category, File, Product } from '@prisma/client';
 import { UpdateProductInput } from './dto/input/update-product.input';
-import { FilterProductArgs } from './dto/args/product-filter.args';
-import { PaginationProductArgs } from './dto/args/product-pagination.args';
-import { GetProductArgs } from './dto/args/get-product.args';
-import { DeleteProductArgs } from './dto/args/delete-product.args';
+import { FilesService } from 'src/files/files.service';
+import { AddFilesInput } from './dto/input/add-files.input';
+import { GetProductArgs } from './dto/args/product-find-all.args';
 
 @Injectable()
 export class ProductsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private fileService: FilesService,
+  ) {}
 
-  async createProduct(createProductData: CreateProductInput): Promise<Product> {
-    return await this.prisma.product.create({ data: createProductData });
+  async create(
+    createProductData: CreateProductInput,
+    addFilesData: AddFilesInput,
+  ): Promise<Product> {
+    const product = await this.prisma.product.create({
+      data: createProductData,
+    });
+    this.fileService.updateIdProductFile(addFilesData.image, product.id);
+    return product;
   }
 
-  async findOneProduct(getProduct: GetProductArgs): Promise<Product> {
-    return await this.prisma.product.findUnique({
+  async findOne(id: number): Promise<Product> {
+    return this.prisma.product.findUnique({
       where: {
-        id: getProduct.id,
+        id: id,
       },
     });
   }
 
-  async paginationProducts( // наименование не подходи, ты можешь просто указать findAll()
-    pagination: PaginationProductArgs,
-  ): Promise<Product[] | null> { // он у тебя не вернет Null, если товаров нет, он вернет пустой []
+  async findAll(findAllArgs: GetProductArgs): Promise<Product[]> {
     return this.prisma.product.findMany({
-      skip: pagination.skip,
-      take: pagination.take,
+      skip: findAllArgs.skip,
+      take: findAllArgs.take,
       where: {
         AND: [
           {
-            name: { contains: pagination.search, mode: 'insensitive' },
+            name: { contains: findAllArgs.search, mode: 'insensitive' },
           },
           {
-            categoryId: pagination.categoryId,
+            categoryId: findAllArgs.categoryId,
           },
         ],
       },
-      include: {
-        Category: {
-          where: { delete_at: null }
-        },
-      }
     });
   }
 
-  async updateProduct(
-    updateProductInput: UpdateProductInput,
-  ): Promise<Product> {
-    return await this.prisma.product.update({
-      where: { id: updateProductInput.id },
-      data: {
-        //Громосткая запись, можешь воспользоваться оператором '...' - ...updateProductInput. Почитай про него, ну и также можешь почитать про тернарных операторов
-        name: updateProductInput.name,
-        description: updateProductInput.description,
-        price: updateProductInput.price,
-        categoryId: updateProductInput.categoryId,
-        caliber: updateProductInput.caliber,
-        length: updateProductInput.length,
-        shop: updateProductInput.shop,
-        update_at: new Date(),
+  async findCategory(categoryId: number): Promise<Category[]> {
+    return this.prisma.category.findMany({
+      where: {
+        id: categoryId,
       },
     });
   }
 
-  async deleteProduct(deleteProductArgs: DeleteProductArgs) {
-    return await this.prisma.product.delete({
+  async findFiles(id: number): Promise<File[]> {
+    return this.prisma.file.findMany({
       where: {
-        id: deleteProductArgs.id,
+        productId: id,
+      },
+    });
+  }
+
+  async update(updateProductInput: UpdateProductInput): Promise<Product> {
+    return this.prisma.product.update({
+      where: { id: updateProductInput.id },
+      data: {
+        ...updateProductInput,
+      },
+    });
+  }
+
+  async delete(id: number) {
+    return this.prisma.product.delete({
+      where: {
+        id: id,
       },
     });
   }

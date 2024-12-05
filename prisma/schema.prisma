@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearch"]
 }
 
@@ -9,87 +9,79 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  login     String    @unique
-  password  String
-  firstName String?
-  name      String?
-  role      RoleEnum  @default(USER)
-  Basket    Basket?
-  product   Product[]
-
-  //Где soft-delete ?
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  login      String    @unique
+  password   String
+  firstName  String?
+  name       String?
+  role       RoleEnum  @default(USER)
+  created_at DateTime  @default(now())
+  deleted_at DateTime?
+  updated_at DateTime? @updatedAt
+  Basket     Basket?
+  Product    Product[]
 }
 
 model Category {
   id         Int       @id @default(autoincrement())
   name       String
   created_at DateTime  @default(now())
-  update_at  DateTime? //@updatedAt
-  delete_at  DateTime?
-  products   Product[]
+  deleted_at DateTime?
+  updated_at DateTime? @updatedAt
+  Products   Product[]
 }
 
 model Product {
-  id          Int       @id @default(autoincrement())
-  name        String
-  image       String?
-  description String
-  price       Float
-  caliber     String
-  length      String
-  shop        String
-  created_at  DateTime  @default(now())
-  update_at   DateTime?
-  delete_at   DateTime?
-  Category    Category? @relation(fields: [categoryId], references: [id])
-  categoryId  Int?
-  basket      Basket[]
-  User        User?     @relation(fields: [authorId], references: [id])
-  authorId    Int?
+  id            Int             @id @default(autoincrement())
+  name          String
+  description   String
+  price         Float
+  caliber       String?
+  length        String?
+  shop          String?
+  created_at    DateTime        @default(now())
+  categoryId    Int?
+  authorId      Int?
+  deleted_at    DateTime?
+  updated_at    DateTime?       @updatedAt
+  BasketProduct BasketProduct[]
+  File          File[]
+  User          User?           @relation(fields: [authorId], references: [id])
+  Category      Category?       @relation(fields: [categoryId], references: [id])
 }
 
-//У тебя в корзине будет только один товар Или у тебя будет несколько корзин??? Снизу более правильная реализация под данный кейс
-
-// model Basket {
-//   id         Int       @id @default(autoincrement())
-//   userId     Int?      @unique
-
-//   created_at DateTime  @default(now())
-//   update_at  DateTime?
-//   delete_at  DateTime?
-  
-//   User       User?     @relation(fields: [userId], references: [id])
-// }
-
-// model BasketProduct {
-//   id         Int       @id @default(autoincrement())
-//   basket_id   Int
-//   product_id Int
-//   count      Int
-
-//   created_at DateTime  @default(now())
-//   update_at  DateTime?
-//   delete_at  DateTime?
-  
-//   Basket     Basket      @relation(fields: [basket_id], references: [id])
-//   Product    Product     @relation(fields: [product_id], references: [id])
-// }
+model File {
+  id         Int       @id @default(autoincrement())
+  url        String
+  productId  Int?
+  created_at DateTime  @default(now())
+  deleted_at DateTime?
+  updated_at DateTime? @updatedAt
+  Product    Product?  @relation(fields: [productId], references: [id])
+}
 
 model Basket {
-  id         Int       @id @default(autoincrement())
-  user       User?     @relation(fields: [userId], references: [id])
-  userId     Int?      @unique
-  Product    Product?  @relation(fields: [productId], references: [id])
-  productId  Int?
-  count      Int
-  created_at DateTime  @default(now())
-  update_at  DateTime?
-  delete_at  DateTime?
+  id            Int             @id @default(autoincrement())
+  userId        Int?            @unique
+  created_at    DateTime        @default(now())
+  deleted_at    DateTime?
+  updated_at    DateTime?       @updatedAt
+  User          User?           @relation(fields: [userId], references: [id])
+  BasketProduct BasketProduct[]
 }
 
-
+model BasketProduct {
+  id         Int       @id @default(autoincrement())
+  basket_id  Int
+  product_id Int
+  count      Int
+  created_at DateTime  @default(now())
+  updated_at DateTime? @updatedAt
+  deleted_at DateTime?
+  Basket     Basket    @relation(fields: [basket_id], references: [id])
+  Product    Product   @relation(fields: [product_id], references: [id])
+}
 
 enum RoleEnum {
   USER

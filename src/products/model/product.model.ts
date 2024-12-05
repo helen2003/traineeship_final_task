@@ -1,44 +1,49 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 import { Product } from '@prisma/client';
+import { CategoryModel } from 'src/category/model/category.model';
+import { FileModel } from 'src/files/model/files.model';
 
 @ObjectType()
-export class Products implements Product {
-  @Field((type) => Int, { description: 'Иденификатор товара' })
+export class ProductModel implements Product {
+  @Field(() => Int)
   id: number;
 
-  @Field({ description: 'Изображение товара' })
-  image: string;
-
-  @Field({ description: 'Наименование товара' })
+  @Field(() => String)
   name: string;
 
-  @Field({ description: 'Описание товара' })
+  @Field(() => String)
   description: string;
 
-  @Field((type) => Float, { description: 'Цена товара' })
+  @Field(() => [FileModel], { nullable: true })
+  File: FileModel[];
+
+  @Field(() => [CategoryModel], { nullable: true })
+  Category: CategoryModel[];
+
+  @Field(() => Float)
   price: number;
 
-  @Field({ description: 'Калибр товара' })
+  @Field(() => String)
   caliber: string;
 
-  @Field({ description: 'Длина ствола товара' })
+  @Field(() => String)
   length: string;
 
-  @Field({ description: 'Магазин товара' })
+  @Field(() => String)
   shop: string;
 
-  @Field((type) => Int, { description: 'Категория товара' })
+  @Field(() => Int)
   categoryId: number;
 
-  @Field((type) => Int, { description: 'Продавец товара' })
+  @Field(() => Int)
   authorId: number;
 
-  @Field({ description: 'Дата создания товара' })
+  @Field()
   created_at: Date;
 
-  @Field({ description: 'Дата обновления товара' })
-  update_at: Date;
+  @Field()
+  updated_at: Date;
 
-  @Field({ description: 'Дата удаления товара' })
-  delete_at: Date;
+  @Field()
+  deleted_at: Date;
 }

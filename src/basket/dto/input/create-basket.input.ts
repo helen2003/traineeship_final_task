@@ -1,16 +1,14 @@
-import { Field, InputType, Int } from '@nestjs/graphql';
-import { Baskets } from 'src/basket/model/basket.model';
+import { Field, InputType, Int, PickType } from '@nestjs/graphql';
+import { BasketProductModel } from 'src/basket/model/basketProduct.model';
 
 @InputType()
-//Почитай еще раз про наследование, зачем ты в Input наследуешься от модели сущности,
-export class CreateBasketInput extends Baskets {
-  //В graphql здесь не нужно указывать @Field((type) => Int), можно указать просто @Field(() => Int)
-  @Field(() => Int, { description: 'Идентифкатор пользователя' })
-  userId: number;
+export class CreateBasketInput extends PickType(BasketProductModel, [
+  'product_id',
+  'count',
+]) {
+  @Field(() => Int)
+  product_id: number;
 
-  @Field((type) => Int, { description: 'Идентифкатор товара' })
-  productId: number;
-
-  @Field((type) => Int, { description: 'Количесвто товара' })
+  @Field(() => Int)
   count: number;
 }

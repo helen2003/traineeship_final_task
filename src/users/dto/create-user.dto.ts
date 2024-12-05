@@ -1,8 +1,12 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import { IsEmail, IsString, Length } from 'class-validator';
-import { User } from '../model/users.model';
+import { UserModel } from '../model/users.model';
 
-export class CreateUserDto extends User {
+export class CreateUserDto extends PickType(UserModel, [
+  'email',
+  'login',
+  'password',
+]) {
   @ApiProperty({ example: 'user@mail.ru', description: 'Почта' })
   @IsEmail({}, { message: 'Некорректный email' })
   email: string;
