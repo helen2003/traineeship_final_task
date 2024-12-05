@@ -9,12 +9,12 @@ export class CategoryModel implements Category {
   @Field(() => String)
   name: string;
 
-  @Field()
+  @Field(() => Date)
   created_at: Date;
 
-  @Field()
+  @Field(() => Date)
   updated_at: Date;
 
-  @Field()
+  @Field(() => Date)
   deleted_at: Date;
 }

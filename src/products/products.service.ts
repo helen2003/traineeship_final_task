@@ -34,7 +34,7 @@ export class ProductsService {
   }
 
   async findAll(findAllArgs: GetProductArgs): Promise<Product[]> {
-    return this.prisma.product.findMany({
+    const products = await this.prisma.product.findMany({
       skip: findAllArgs.skip,
       take: findAllArgs.take,
       where: {
@@ -48,6 +48,8 @@ export class ProductsService {
         ],
       },
     });
+    const totalCount = products.length
+    return products
   }
 
   async findCategory(categoryId: number): Promise<Category[]> {

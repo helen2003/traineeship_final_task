@@ -38,12 +38,12 @@ export class ProductModel implements Product {
   @Field(() => Int)
   authorId: number;
 
-  @Field()
+  @Field(() => Date)
   created_at: Date;
 
-  @Field()
+  @Field(() => Date)
   updated_at: Date;
 
-  @Field()
+  @Field(() => Date)
   deleted_at: Date;
 }

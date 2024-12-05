@@ -64,7 +64,7 @@ export class AuthService {
 
   async refreshTokens(refreshToken: string): Promise<TokenInterface> {
     const user = this.jwtService.verify(refreshToken, {
-      secret: process.env.JWT_REFRESH_SECRET,
+      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
     });
     return this.getTokens({
       sub: user.sub,

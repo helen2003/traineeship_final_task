@@ -2,7 +2,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { RoleEnum, User } from '@prisma/client';
 
 @ObjectType()
-export class UserModel implements User{
+export class UserModel implements User {
   @Field(() => Int)
   id: number;
 
@@ -24,12 +24,12 @@ export class UserModel implements User{
   @Field()
   role: RoleEnum;
 
-  @Field()
+  @Field(() => Date)
   created_at: Date;
 
-  @Field()
+  @Field(() => Date)
   deleted_at: Date;
 
-  @Field()
+  @Field(() => Date)
   updated_at: Date;
 }

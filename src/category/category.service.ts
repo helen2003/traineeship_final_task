@@ -11,17 +11,22 @@ export class CategoryService {
       where: {
         name: {
           equals: name,
-          mode: 'insensitive'
-        }
-      }
-    })
-    if (category){
+          mode: 'insensitive',
+        },
+      },
+    });
+    if (category) {
       throw new HttpException('Категория уже записана', HttpStatus.BAD_REQUEST);
     }
     return this.prisma.category.create({ data: { name: name } });
   }
 
   async getAll(): Promise<Category[]> {
+    // const totalCount = await this.prisma.category.count({
+    //   where: {
+    //     deleted_at: null,
+    //   },
+    // });
     return this.prisma.category.findMany({});
   }
 

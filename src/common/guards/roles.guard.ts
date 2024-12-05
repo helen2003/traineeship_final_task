@@ -11,12 +11,14 @@ import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private reflector: Reflector,
+    private configService: ConfigService
   ) {}
 
   canActivate(
@@ -43,7 +45,7 @@ export class RolesGuard implements CanActivate {
         });
       }
 
-      const user = this.jwtService.verify(token, {secret: process.env.JWT_ACCESS_SECRET});
+      const user = this.jwtService.verify(token, {secret: this.configService.get<string>('JWT_ACCESS_SECRET')});
       req.user = user;
       requiredRoles.indexOf(user.role);
       if (requiredRoles.indexOf(user.role) > -1) {
